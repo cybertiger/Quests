@@ -40,9 +40,9 @@ public class Quester {
     boolean hasJournal = false;
     
     public String questToTake;
-    public LinkedHashMap<Quest, Integer> currentQuests = new LinkedHashMap<Quest, Integer>() {
+    public CurrentQuestsMap currentQuests = new CurrentQuestsMap();
 
-        @Override
+    public class CurrentQuestsMap extends LinkedHashMap<Quest, Integer> {
         public Integer get(Object key) {
             Integer result = super.get(key);
             return result == null ? 0 : result;
@@ -57,6 +57,9 @@ public class Quester {
         }
         
         public Integer hardPut(Quest key, Integer val) {
+            if (key == null) {
+                new Exception().printStackTrace();
+            }
             return super.put(key, val);
         }
         
@@ -89,7 +92,9 @@ public class Quester {
     };
     int questPoints = 0;
     Quests plugin;
-    public LinkedList<String> completedQuests = new LinkedList<String>() {
+    public CompletedQuestsList completedQuests = new CompletedQuestsList();
+
+    public class CompletedQuestsList extends LinkedList<String> {
 
         @Override
         public boolean add(String e) {
@@ -149,7 +154,9 @@ public class Quester {
     
     Map<String, Long> completedTimes = new HashMap<String, Long>();
     
-    Map<String, Integer> amountsCompleted = new HashMap<String, Integer>() {
+    AmountsCompletedMap amountsCompleted = new AmountsCompletedMap();
+
+    public class AmountsCompletedMap extends HashMap<String, Integer> {
         
         public void hardClear() {
             super.clear();
@@ -184,7 +191,9 @@ public class Quester {
     };
 
     
-    Map<Quest, QuestData> questData = new HashMap<Quest, QuestData>() {
+    QuestDataMap questData = new QuestDataMap();
+    
+    private class QuestDataMap extends HashMap<Quest, QuestData> {
         
         @Override
         public QuestData put(Quest key, QuestData val) {
@@ -3388,46 +3397,22 @@ if (quest != null) {
     }
     
     public void hardQuit(Quest quest) {
-        
-        try {
-            currentQuests.getClass().getMethod("hardRemove", Object.class).invoke(currentQuests, quest);
-            questData.getClass().getMethod("hardRemove", Object.class).invoke(questData, quest);
-        } catch (Exception ex) {
-            Logger.getLogger(Quests.class.getName()).log(Level.SEVERE, null, ex);
-        }
-        
+        currentQuests.hardRemove(quest);
+        questData.hardRemove(quest);
     }
     
     public void hardClear() {
-        
-        try {
-            currentQuests.getClass().getMethod("hardClear", Object.class).invoke(currentQuests);
-            questData.getClass().getMethod("hardClear", Object.class).invoke(questData);
-            amountsCompleted.getClass().getMethod("hardClear", Object.class).invoke(amountsCompleted);
-        } catch (Exception ex) {
-            Logger.getLogger(Quests.class.getName()).log(Level.SEVERE, null, ex);
-        }
-        
+        currentQuests.hardClear();
+        questData.hardClear();
+        amountsCompleted.hardClear();
     }
     
     public void hardStagePut(Quest key, Integer val) {
-        
-        try {
-            currentQuests.getClass().getMethod("hardPut", Quest.class, Integer.class).invoke(currentQuests, key, val);
-        } catch (Exception ex) {
-            Logger.getLogger(Quests.class.getName()).log(Level.SEVERE, null, ex);
-        }
-        
+        currentQuests.hardPut(key,val);
     }
     
     public void hardDataPut(Quest key, QuestData val) {
-        
-        try {
-            questData.getClass().getMethod("hardPut", Quest.class, QuestData.class).invoke(questData, key, val);
-        } catch (Exception ex) {
-            Logger.getLogger(Quests.class.getName()).log(Level.SEVERE, null, ex);
-        }
-        
+        questData.hardPut(key, val);
     }
 
 }
