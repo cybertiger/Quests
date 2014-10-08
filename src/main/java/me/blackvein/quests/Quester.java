@@ -41,6 +41,12 @@ public class Quester {
     
     public String questToTake;
     public LinkedHashMap<Quest, Integer> currentQuests = new LinkedHashMap<Quest, Integer>() {
+
+        @Override
+        public Integer get(Object key) {
+            Integer result = super.get(key);
+            return result == null ? 0 : result;
+        }
         
         public Integer hardRemove(Object key) {
             return super.remove((Quest) key);
